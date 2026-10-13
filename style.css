@@ -13,6 +13,7 @@ html {
 
 body {
   font-family: Arial, Geneva, sans-serif;
+  background-color: #cef0fd;
 }
 a {
   color: #2772b0;
@@ -22,7 +23,8 @@ a {
   max-width: 1200px;
   margin: 0 auto;
   float: none;
-  background-color: #fff;
+  background-color: #ffffff;
+  padding: 20px 5px;
 }
 
 div img {
@@ -44,25 +46,20 @@ h3 {
 }
 
 /* grid system -- mobile first! */
-/* flex contatiner */
+/* grid container */
 
-.row {
-  display: flex;
-  flex-flow: row wrap;
+/*used to be .row with display: flex and flex-flow: row wrap*/
+section .wrapper {
+  display: grid; /*display is grid instead of flex*/
+  gap: 10px; /*spacing between grid items*/
+  align-items: stretch; /*new grid property: stretch every item to height of tallest item in row (stretch is default value) */
 }
 
-/* more flex properties to apply to last row (6) */
-.row-6 {
-  flex-direction: row-reverse; /* reverse the order the items appear */
-  justify-content: flex-end; /* align to end (left side) so that row does not start with blank space */
-}
-/* attribute selector to give some margin between columns and apply styles to flex items */
-
+/* attribute selector to give some padding and box shadows */
 [class*="col-"] {
-  margin-left: 4%;
-  flex: 0 0 92%;
   border-radius: 10px;
   padding: 5px;
+  box-shadow: 5px 5px rgba(148, 132, 255, 0.4);
 }
 
 /* Add background colors to see how much space each column is taking */
@@ -80,7 +77,7 @@ h3 {
 }
 
 .col-4 {
-  background-color: #e1afff;
+  background-color: #9cbbf8;
 }
 
 .col-5 {
@@ -93,66 +90,99 @@ h3 {
 
 /* Tablet Landscape Screen Sizes */
 @media only screen and (min-width: 480px) {
-  .col-1,
-  .col-2 {
-    flex: 0 0 44%;
+  /* half width (used to be .col-1, .col-2 {flex: 0 0 44%;} */
+  section .wrapper {
+    /*new grid value: repeat(2, 1fr) = "1fr 1fr", where fr = one equal fraction of the free space, i.e. 2 equal columns*/
+    grid-template-columns: repeat(2, 1fr);
   }
 
+  /* full width (used to be .row-3 .col-1 {flex: 0 0 92%}, .row-5 .col-2 {flex: 0 0 92%;}*/
+  .col-3,
+  .col-4,
   .row-3 .col-1 {
-    flex: 0 0 92%;
+    /*grid-column specifies item's size/location within column*/
+    /*new grid value: grid item should take full row width*/
+    /*-1 is last grid line, so go from first grid line to last*/
+    grid-column: 1/-1;
   }
 
+  /* full width (used to be .row-5 .col-2 {flex: 0 0 92%;}*/
+  /* .row-5 .col-2 { */
+  /*new grid value: grid item should take full row width*/
+  /*-1 is last grid line, so go from first grid line to last*/
+  /* grid-column: 1/-1; */
+  /*put at beginning*/
+  /* grid-row: 1;  */
+  /* } */
+
+  /*new grid property: grid-area names each item so grid-template-areas can place it*/
+  .row-5 .col-1:first-child {
+    grid-area: i1;
+  }
   .row-5 .col-2 {
-    flex: 0 0 92%;
-    order: -1; /* put at beginning */
+    grid-area: i2;
+  }
+  .row-5 .col-1:last-child {
+    grid-area: i3;
   }
 
-  .col-6 {
-    flex: 0 0 28%;
+  /*new grid property: grid-template-areas draws the layout with names; i2 fills the top row while i1 and i3 share the bottom row*/
+  section .row-5 {
+    grid-template-areas:
+      "i2 i2"
+      "i1 i3";
   }
 
-  /* unique flex property */
-  /* row-gap adds a gap between wrapped flex items */
-  /* here, the gap is 1 em */
-  .row-6 {
-    row-gap: 1em;
+  /*3 items per row*/
+  section .row-6 {
+    /*new grid value: repeat(3, 1fr) = "1fr 1fr 1fr", where fr = one equal fraction of the free space, i.e. 3 equal columns*/
+    grid-template-columns: repeat(3, 1fr);
+    /*new grid property: grid-auto-rows sizes the rows the grid creates (1fr makes both pie rows the same height)*/
+    grid-auto-rows: 1fr;
   }
 }
 /* Desktop screen Sizes */
 @media only screen and (min-width: 768px) {
-  /* four column layout, each one column wide */
-  .col-1 {
-    /* flex grow (0=don't grow to take up leftover space) */
-    /* flex shrink (0=dont shrink if no room left) */
-    /* flex basis (20%=starting width in proportion to row width) */
-    flex: 0 0 20%;
+  /*4 column layout*/
+  section .wrapper {
+    /*new grid value: repeat(4, 1fr) = "1fr 1fr 1fr 1fr", where fr = one equal fraction of the free space, i.e. 4 equal columns*/
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /*6 column layout*/
+  section .row-6 {
+    /*new grid value: repeat(6, 1fr) = "1fr 1fr 1fr 1fr 1fr 1fr", where fr = one equal fraction of the free space, i.e. 6 equal columns*/
+    grid-template-columns: repeat(6, 1fr);
   }
 
   /* two column layout, each two columns wide */
   .col-2 {
-    flex: 0 0 44%;
+    /*grid-column specifies item's size/location within column*/
+    grid-column: span 2; /*new grid value (span 2): each grid item should span 2 columns wide*/
   }
 
   /* 3 column wide */
   .col-3 {
-    flex: 0 0 68%;
-  }
-
-  /* 4 column wide */
-  .col-4 {
-    flex: 0 0 92%;
+    grid-column: span 3; /*new grid value (span 3): each grid item should span 3 columns wide*/
   }
 
   .row-3 .col-1 {
-    flex: 0 0 20%;
+    grid-column: auto; /*reset to 1 column*/
+  }
+
+  /*turn off the tablet template areas so auto-placement and grid-row take over again*/
+  /*this is just to show use of grid-row as well below*/
+  section .row-5 {
+    grid-template-areas: none;
+  }
+  .row-5 .col-1:first-child,
+  .row-5 .col-1:last-child {
+    grid-area: auto;
   }
 
   .row-5 .col-2 {
-    flex: 0 0 44%;
-    order: 0; /* put back to normal default ordering */
-  }
-
-  .col-6 {
-    flex: 0 0 12%; /* (12+4) * 6 = 96*/
+    /*grid-row specifies item's size/location within row (auto=automatic placement)*/
+    grid-row: auto;
+    grid-column: span 2; /*new grid value (span 2): each grid item should span 2 columns wide*/
   }
 }
